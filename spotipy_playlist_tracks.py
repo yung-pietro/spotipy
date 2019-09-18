@@ -21,7 +21,7 @@ playlist_id = '37i9dQZF1E8Gd0iQSccTIC'
 offset = 0
 
 
-results = sp.user_playlist_tracks(username, playlist_id, fields=None, offset=offset, market=None)
+results = sp.user_playlist_tracks(username, playlist_id, fields=None, limit=100, offset=offset, market=None)
 # pprint(results)
 # exit()
 print(json.dumps(results, indent=4))
