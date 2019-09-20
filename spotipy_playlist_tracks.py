@@ -38,9 +38,23 @@ track_ids = []
 
 # create a dictionary with ID and attributes of a single track
 
-track_attributes = {'track_name': [], 'track_id': [], 'track_url': []}
+track_attributes = {'track_name': [], 
+                    'track_id': [], 
+                    'track_url': [], 
+                    'danceability': [], 
+                    'energy': [], 
+                    'key': [], 
+                    'loudness': [], 
+                    'mode': [], 
+                    'speechiness': [],
+                    'acousticness': [],
+                    'instrumental': [],
+                    'liveness': [],
+                    'valence': [],
+                    'tempo': [],
+                    'duration_ms': [] }
 
-
+id_list_hack = []
 
 for item in results['items']:
     # print(type(item))
@@ -55,17 +69,35 @@ for item in results['items']:
     track_attributes['track_name'].append(item['track']['name'])
     track_attributes['track_id'].append(item['track']['id'])
     track_attributes['track_url'].append(item['track']['external_urls']['spotify'])
+    id_list_hack.append(item['track']['id'])
 
-#print(track_attributes)
+# perhaps, first build the dictionary, then add things like above
+
+list = 0
+for id in id_list_hack:
+    att_add = sp.audio_features(id)
+    track_attributes[list]['energy'].append(att_add['energy'])
+    track_attributes[list]['key'].append(att_add['key'])
+    track_attributes[list]['loudness'].append(att_add['loudness'])
+    track_attributes[list]['mode'].append(att_add['mode'])
+    track_attributes[list]['speechiness'].append(att_add['speechiness'])
+    track_attributes[list]['acousticness'].append(att_add['acousticness'])
+    track_attributes[list]['instrumental'].append(att_add['instrumental'])
+    track_attributes[list]['liveness'].append(att_add['liveness'])
+    track_attributes[list]['valence'].append(att_add['valence'])
+    track_attributes[list]['tempo'].append(att_add['tempo'])
+    track_attributes[list]['duration_ms'].append(att_add['duration'])
+    list += 1
 
 df = pd.DataFrame.from_dict(track_attributes)
-# df.to_csv(r'tracks.csv', index = False)
-print(df.columns)
+print(df)
+df.to_csv(r'track_attributes.csv', index = False)
+   
+    #print(id)
+    #print(sp.audio_features(id)[0]['loudness'])
 
-ids = df['track_id'].tolist()
-for id in ids:
-    print(id)
-    print(sp.audio_features(id)[0]['loudness'])
+
+# df2.to_csv(r'attributes-example.csv', index=False)
 
 # print(track_ids)
 # checks the loop
@@ -75,68 +107,10 @@ for id in ids:
 
 
 
-exit()
+#exit()
+#Use this for segmented testing
 
 
 # I'm able to slice (using [0] syntax) b/c the dictionary has an embedded list
 
 
-# # ----------------------- Experimental -------------------------
-
-# #Extract Artist's uri
-
-# #Store artist's track' names' and uris in separate lists
-# track_artist = []
-# track_art = []
-# track_names = []
-# track_uris = []
-
-# for i in range(len(results['items'])):
-#     track_artist.append(results['items'][i]['track']['album']['artists']['name'])
-#     track_art.append(results['items'][i]['track']['album']['images'][2]['url'])
-#     track_names.append(results['items'][i]['track']['name'])
-#     track_uris.append(results['items'][i]['track']['id'])
-
-
-# album_names
-# album_uris
-# #Keep names and uris in same order to keep track of duplicate albums
-
-
-# def trackUris(uri):
-#     track = uri
-
-# def audio_features(track):
-#     #Add new key-values to store audio features
-#     playlist_tracks['acousticness'] = []
-#     playlist_tracks['danceability'] = []
-#     playlist_tracks['energy'] = []
-#     playlist_tracks['instrumentalness'] = []
-#     playlist_tracks['liveness'] = []
-#     playlist_tracks['loudness'] = []
-#     playlist_tracks['speechiness'] = []
-#     playlist_tracks['tempo'] = []
-#     playlist_tracks['valence'] = []
-#     playlist_tracks['popularity'] = []
-#     #create a track counter
-#     track_count = 0
-#     for track in results['items']['track']['id']:
-#         #pull audio features per track
-#         features = sp.audio_features(track)
-#         #Append to relevant key-value
-#         playlist_tracks['acousticness'].append(features[0]['acousticness'])
-#         playlist_tracks['danceability'].append(features[0]['danceability'])
-#         playlist_tracks['energy'].append(features[0]['energy'])
-#         playlist_tracks['instrumentalness'].append(features[0]['instrumentalness'])
-#         playlist_tracks['liveness'].append(features[0]['liveness'])
-#         playlist_tracks['loudness'].append(features[0]['loudness'])
-#         playlist_tracks['speechiness'].append(features[0]['speechiness'])
-#         playlist_tracks['tempo'].append(features[0]['tempo'])
-#         playlist_tracks['valence'].append(features[0]['valence'])
-#         #popularity is stored elsewhere
-#         pop = sp.track(track)
-#         playlist_tracks['popularity'].append(pop['popularity'])
-#         track_count+=1
-
-# # we need to:
-# # 1. loop through our track results and using the URI, append
