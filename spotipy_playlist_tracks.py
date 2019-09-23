@@ -23,25 +23,23 @@ offset = 0
 
 
 results = sp.user_playlist_tracks(username, playlist_id, fields=None, limit=100, offset=offset, market=None)
-# Currently outputs a dictionary with (embedded lists and dicts) containing track info.  Things like identifying URI, album art, etc. I want to loop through each track listing and, using
-#the identifying URI, grab track info.
+# Currently outputs a dictionary with (embedded lists and dicts) containing track info.  Things like identifying URI, album art, etc. 
+# I will use this to loop through each track listing and, using the identifying URI, grab track info.
 
 #print(json.dumps(results, indent=4))
 #shows the full dump
 
 # print(results['items'][0]['track']['id'])
-#demo accessing a single dictionary item
+#demo accessing a single track id
 
 # print the type of the object 
 # print(type(results['items']))
 
 
-# create a dictionary with ID and attributes of a single track
 
 track_attributes = { 
                     'track_name': [], 
-                    'track_id': [],
-                   # 'track_url': [], 
+                    'track_id': [],                
                     'album_art': [],
                     'danceability': [], 
                     'energy': [], 
@@ -55,16 +53,19 @@ track_attributes = {
                     'valence': [],
                     'tempo': [],
                     'duration_ms': []} 
+# create an open dictionary to be able to receive all attributes
 
 
 for item in results['items']:
-    # id_list.append(item['track']['id'])
+#results is a massive dictionary results for each track in a playlist.  This loops through each result returned.
     track_id = item['track']['id']
     track_attributes['track_name'].append(item['track']['name'])
-    #track_attributes['track_url'].append(item['track']['url'])
+    #we don't need to slice the results list to [0] b/c we're already inside the list with the loop
     track_attributes['album_art'].append(item['track']['album']['images'][1]['url'])
+    #album kjey has a nested list, so we need to slice @ [1] to get the 300x300px 
     ind_track_attributes = sp.audio_features(track_id)[0]
-        #the [0] accesses the nested dictionary inside the list
+    #the [0] accesses the nested dictionary inside the list
+
     track_attributes['track_id'].append(ind_track_attributes['id'])
     track_attributes['danceability'].append(ind_track_attributes['danceability'])
     track_attributes['energy'].append(ind_track_attributes['energy'])
@@ -79,48 +80,15 @@ for item in results['items']:
     track_attributes['tempo'].append(ind_track_attributes['tempo'])
     track_attributes['duration_ms'].append(ind_track_attributes['duration_ms'])
 
-for key in track_attributes:
-    print(len(track_attributes[key]))
-    print(key)
-# print(track_attributes)
-
-# for key, value in track_attributes.items():
-#     print(len(value))
-# exit()
-
-# test = sp.audio_features(id_list[0])
-# print(f"Features of {id_list[0]} are: ")
-# print(test)
-
-
-    # track_attributes['track_name'].append(item['track']['name'])
-    # track_attributes['track_id'].append(item['track']['id'])
-    # track_attributes['track_url'].append(item['track']['external_urls']['spotify'])
-    #id_list_hack.append(item['track']['id'])
+# for key in track_attributes:
+#     print(len(track_attributes[key]))
+#     print(key)
+# #test to see if we return all the same number of results
 
 
 df = pd.DataFrame.from_dict(track_attributes)
 print(df)
 df.to_csv(r'track_attributes.csv', index = False)
 exit() 
-    #print(id)
-    #print(sp.audio_features(id)[0]['loudness'])
-
-
-# df2.to_csv(r'attributes-example.csv', index=False)
-
-# print(track_ids)
-# checks the loop
-
-# feature_test = sp.audio_features(track_ids[0])[0]
-# print(feature_test)
-
-
-
-#exit()
-#Use this for segmented testing
-
-
-# I'm able to slice (using [0] syntax) b/c the dictionary has an embedded list
-
+    
 
